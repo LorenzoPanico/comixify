@@ -80,7 +80,8 @@ class StyleTransfer():
             model.load_state_dict(torch.load(os.path.join("CartoonGAN/pretrained_model", style + "_net_G_float.pth")))
             model.eval()
             model.cuda() if gpu else model.float()
-            cache[model_cache_key] = model
+            # Disable cache for memory issue
+            # cache[model_cache_key] = model
 
         frames = cls._resize_images(frames, size=450)
         stylized_imgs = []

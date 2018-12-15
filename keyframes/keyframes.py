@@ -135,7 +135,8 @@ class KeyFramesExtractor:
             if gpu:
                 model = nn.DataParallel(model).cuda()
             model.eval()
-            cache[model_cache_key] = model
+            # disable cache for memory issue
+            # cache[model_cache_key] = model
 
         seq = torch.from_numpy(features).unsqueeze(0)
         if gpu:
