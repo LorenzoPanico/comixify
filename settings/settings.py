@@ -1,4 +1,5 @@
 import os
+import inspect
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,6 +39,7 @@ class SettingObject(object):
 settings = SettingObject()
 
 for key, value in config_dict.items():
-    if isinstance(key, str):
-        os.environ[key] = value
+    if not inspect.ismodule(value):
+        if not isinstance(value, list):
+            os.environ[key] = str(value)
         setattr(settings, key, value)
