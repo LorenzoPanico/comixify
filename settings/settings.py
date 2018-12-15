@@ -38,5 +38,6 @@ class SettingObject(object):
 settings = SettingObject()
 
 for key, value in config_dict.items():
-    os.environ[key] = value
-    setattr(settings, key, value)
+    if isinstance(key, str):
+        os.environ[key] = value
+        setattr(settings, key, value)
