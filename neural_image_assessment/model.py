@@ -7,7 +7,8 @@ from PIL import Image
 from keras.applications.nasnet import preprocess_input
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
-from django.conf import settings
+
+from settings.settings import settings
 
 
 class NeuralImageAssessment:

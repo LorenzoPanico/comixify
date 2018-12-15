@@ -4,17 +4,18 @@ import cv2
 import numpy as np
 import torch
 import torchvision.transforms as transforms
-from django.conf import settings
-from django.core.cache import cache
 from torch.autograd import Variable
 
 from CartoonGAN.network.Transformer import Transformer
 from ComixGAN.model import ComixGAN
 from utils import profile
+from settings.settings import settings
 
 # load pretrained model
 comixGAN = ComixGAN()
 
+# Manual cache
+cache = {}
 
 class StyleTransfer():
     @classmethod
@@ -79,7 +80,7 @@ class StyleTransfer():
             model.load_state_dict(torch.load(os.path.join("CartoonGAN/pretrained_model", style + "_net_G_float.pth")))
             model.eval()
             model.cuda() if gpu else model.float()
-            cache.set(model_cache_key, model, None)  # None is the timeout parameter. It means cache forever
+            cache[model_cache_key] = model
 
         frames = cls._resize_images(frames, size=450)
         stylized_imgs = []

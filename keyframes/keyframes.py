@@ -10,8 +10,6 @@ import caffe
 from subprocess import call
 from math import ceil
 from sklearn.preprocessing import normalize
-from django.conf import settings
-from django.core.cache import cache
 from skimage import img_as_ubyte
 import logging
 
@@ -21,11 +19,14 @@ from popularity.models import PopularityPredictor
 from neural_image_assessment.model import NeuralImageAssessment
 from keyframes.kts import cpd_auto
 from keyframes.utils import batch
+from settings.settings import settings
 
 logger = logging.getLogger(__name__)
 
 nima_model = NeuralImageAssessment()
 
+# Manual cache
+cache = {}
 
 class KeyFramesExtractor:
     @classmethod
@@ -134,10 +135,11 @@ class KeyFramesExtractor:
             if gpu:
                 model = nn.DataParallel(model).cuda()
             model.eval()
-            cache.set(model_cache_key, model, None)
+            cache[model_cache_key] = model
 
         seq = torch.from_numpy(features).unsqueeze(0)
-        if gpu: seq = seq.cuda()
+        if gpu:
+            seq = seq.cuda()
         probs = model(seq)
         probs = probs.data.cpu().squeeze().numpy()
         return probs
@@ -174,7 +176,7 @@ class KeyFramesExtractor:
             model = cache.get(model_cache_key)  # get model from cache
             if model is None:
                 model = PopularityPredictor()
-                cache.set(model_cache_key, model, None)
+                cache[model_cache_key] = model
             for frame in frames:
                 x = features[frame["index"]]
                 frame["popularity"] = model.get_popularity_score(x).squeeze()
