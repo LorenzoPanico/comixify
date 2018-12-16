@@ -1,6 +1,8 @@
 import os
 import inspect
 
+import tensorflow as tf
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,7 +24,7 @@ MAX_FRAME_SIZE_FOR_STYLE_TRANSFER = 600
 
 NIMA_MODEL_PATH = os.path.join(BASE_DIR, 'neural_image_assessment', 'pretrained_model', 'nima_model.h5')
 
-# CAFFE_ROOT = 'caffe_git/'
+CAFFE_ROOT = 'caffe_git/'
 
 # keys = ['BASE_DIR', 'PERMITTED_VIDEO_EXTENSIONS', 'MAX_FILE_SIZE', 'NUMBERS_OF_FRAMES_TO_SHOW',
 #         'GPU', 'TMP_DIR', 'FEATURE_BATCH_SIZE', 'DEFAULT_FRAMES_SAMPLING_MODE',
@@ -32,6 +34,14 @@ NIMA_MODEL_PATH = os.path.join(BASE_DIR, 'neural_image_assessment', 'pretrained_
 
 config_dict = {name: value for (name, value) in locals().items() if not name.startswith('_')}
 
+# See https://www.tensorflow.org/tutorials/using_gpu#allowing_gpu_memory_growth
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+
+
+with tf.Session(config=config) as sess:
+  sess.run(tf.global_variables_initializer())
+
 class SettingObject(object):
     def __init__(self):
         super(SettingObject, self).__init__()
@@ -40,6 +50,6 @@ settings = SettingObject()
 
 for key, value in config_dict.items():
     if not inspect.ismodule(value):
-        # if not isinstance(value, list):
-        #     os.environ[key] = str(value)
+        if not isinstance(value, list):
+            os.environ[key] = str(value)
         setattr(settings, key, value)
