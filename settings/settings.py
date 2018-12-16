@@ -22,7 +22,7 @@ MAX_FRAME_SIZE_FOR_STYLE_TRANSFER = 600
 
 NIMA_MODEL_PATH = os.path.join(BASE_DIR, 'neural_image_assessment', 'pretrained_model', 'nima_model.h5')
 
-CAFFE_ROOT = 'caffe_git/'
+# CAFFE_ROOT = 'caffe_git/'
 
 # keys = ['BASE_DIR', 'PERMITTED_VIDEO_EXTENSIONS', 'MAX_FILE_SIZE', 'NUMBERS_OF_FRAMES_TO_SHOW',
 #         'GPU', 'TMP_DIR', 'FEATURE_BATCH_SIZE', 'DEFAULT_FRAMES_SAMPLING_MODE',
@@ -40,6 +40,6 @@ settings = SettingObject()
 
 for key, value in config_dict.items():
     if not inspect.ismodule(value):
-        if not isinstance(value, list):
-            os.environ[key] = str(value)
+        # if not isinstance(value, list):
+        #     os.environ[key] = str(value)
         setattr(settings, key, value)
