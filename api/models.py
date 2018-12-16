@@ -59,4 +59,4 @@ class Video(object):
             'keyframes_extraction_time_details': keyframes_timings
         }
 
-        return comic, timings
+        return comic_image, timings
