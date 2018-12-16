@@ -10,8 +10,10 @@ import caffe
 from subprocess import call
 from math import ceil
 from sklearn.preprocessing import normalize
-from django.conf import settings
-from django.core.cache import cache
+# from django.conf import settings
+# from django.core.cache import cache
+from settings.settings import config as settings
+
 from skimage import img_as_ubyte
 import logging
 
@@ -117,8 +119,9 @@ class KeyFramesExtractor:
     @staticmethod
     @profile
     def _get_probs(features, gpu=True, mode=0):
-        model_cache_key = "keyframes_rl_model_cache_" + str(mode)
-        model = cache.get(model_cache_key)  # get model from cache
+        model = None
+        # model_cache_key = "keyframes_rl_model_cache_" + str(mode)
+        # model = cache.get(model_cache_key)  # get model from cache
 
         if model is None:
             if mode == 1:
@@ -134,7 +137,7 @@ class KeyFramesExtractor:
             if gpu:
                 model = nn.DataParallel(model).cuda()
             model.eval()
-            cache.set(model_cache_key, model, None)
+            # cache.set(model_cache_key, model, None)
 
         seq = torch.from_numpy(features).unsqueeze(0)
         if gpu: seq = seq.cuda()
@@ -169,12 +172,13 @@ class KeyFramesExtractor:
     @staticmethod
     @profile
     def _get_popularity_chosen_frames(frames, features, image_assessment_mode=0, n_frames=10):
+        model = None
         if image_assessment_mode == 1:
-            model_cache_key = "popularity_model_cache"
-            model = cache.get(model_cache_key)  # get model from cache
+            # model_cache_key = "popularity_model_cache"
+            # model = cache.get(model_cache_key)  # get model from cache
             if model is None:
                 model = PopularityPredictor()
-                cache.set(model_cache_key, model, None)
+                # cache.set(model_cache_key, model, None)
             for frame in frames:
                 x = features[frame["index"]]
                 frame["popularity"] = model.get_popularity_score(x).squeeze()

@@ -4,8 +4,9 @@ import cv2
 import numpy as np
 import torch
 import torchvision.transforms as transforms
-from django.conf import settings
-from django.core.cache import cache
+# from django.conf import settings
+# from django.core.cache import cache
+from settings.settings import config as settings
 from torch.autograd import Variable
 
 from CartoonGAN.network.Transformer import Transformer
@@ -62,16 +63,17 @@ class StyleTransfer():
 
     @classmethod
     def _cartoon_gan_stylize(cls, frames, gpu=True, style='Hayao'):
-        if style == 'Hayao':
-            model_cache_key = 'model_cache_hayao'
-            model = cache.get(model_cache_key)  # get model from cache
-
-        elif style == 'Hosoda':
-            model_cache_key = 'model_cache_hosoda'
-            model = cache.get(model_cache_key)  # get model from cache
-
-        else:
-            raise Exception('No such CartoonGAN model!')
+        model = None
+        # if style == 'Hayao':
+        #     model_cache_key = 'model_cache_hayao'
+        #     model = cache.get(model_cache_key)  # get model from cache
+        #
+        # elif style == 'Hosoda':
+        #     model_cache_key = 'model_cache_hosoda'
+        #     model = cache.get(model_cache_key)  # get model from cache
+        #
+        # else:
+        #     raise Exception('No such CartoonGAN model!')
 
         if model is None:
             # load pretrained model
@@ -79,7 +81,7 @@ class StyleTransfer():
             model.load_state_dict(torch.load(os.path.join("CartoonGAN/pretrained_model", style + "_net_G_float.pth")))
             model.eval()
             model.cuda() if gpu else model.float()
-            cache.set(model_cache_key, model, None)  # None is the timeout parameter. It means cache forever
+            # cache.set(model_cache_key, model, None)  # None is the timeout parameter. It means cache forever
 
         frames = cls._resize_images(frames, size=450)
         stylized_imgs = []
