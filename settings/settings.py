@@ -26,14 +26,10 @@ NIMA_MODEL_PATH = os.path.join(BASE_DIR, 'neural_image_assessment', 'pretrained_
 
 CAFFE_ROOT = 'caffe_git/'
 
-# keys = ['BASE_DIR', 'PERMITTED_VIDEO_EXTENSIONS', 'MAX_FILE_SIZE', 'NUMBERS_OF_FRAMES_TO_SHOW',
-#         'GPU', 'TMP_DIR', 'FEATURE_BATCH_SIZE', 'DEFAULT_FRAMES_SAMPLING_MODE',
-#         'DEFAULT_RL_MODE', 'DEFAULT_IMAGE_ASSESSMENT_MODE', 'DEFAULT_STYLE_TRANSFER_MODE',
-#         'COMIX_GAN_MODEL_PATH', 'MAX_FRAME_SIZE_FOR_STYLE_TRANSFER', 'NIMA_MODEL_PATH']
-
 
 config_dict = {name: value for (name, value) in locals().items() if not name.startswith('_')}
 
+# IMPORTANT: fix issues in colab
 # See https://www.tensorflow.org/tutorials/using_gpu#allowing_gpu_memory_growth
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -53,3 +49,4 @@ for key, value in config_dict.items():
         if not isinstance(value, list):
             os.environ[key] = str(value)
         setattr(settings, key, value)
+        print("Setting: {}={}".format(key, value))

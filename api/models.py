@@ -50,17 +50,26 @@ class Video(object):
                 image_assessment_mode=image_assessment_mode
             )
         else:
+            print("Skipping extraction")
             keyframes_timings = 0.0
 
-        stylized_keyframes, stylization_time = StyleTransfer.get_stylized_frames(frames=keyframes,
-                                                                                 style_transfer_mode=style_transfer_mode)
+        if style_transfer_mode < 0:
+            print("Skipping stylisation")
+            stylized_keyframes, stylization_time = keyframes, 0.0
+        else:
+            stylized_keyframes, stylization_time = StyleTransfer.get_stylized_frames(frames=keyframes,
+                                                                                     style_transfer_mode=style_transfer_mode)
+
+
         comic_image, layout_generation_time = LayoutGenerator.get_layout(frames=stylized_keyframes)
+        strip_image, layout_generation_time_2 = LayoutGenerator.get_layout(frames=keyframes)
 
         timings = {
             'keyframes_extraction_time': keyframes_extraction_time,
             'stylization_time': stylization_time,
             'layout_generation_time': layout_generation_time,
+            'layout_generation_time_2': layout_generation_time_2,
             'keyframes_extraction_time_details': keyframes_timings
         }
 
-        return comic_image, timings
+        return comic_image, strip_image, timings
