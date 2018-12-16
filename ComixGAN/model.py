@@ -2,7 +2,8 @@ import errno
 import os
 
 import tensorflow as tf
-from django.conf import settings
+# from django.conf import settings
+from settings.settings import config as settings
 from keras.models import load_model
 from keras_contrib.layers import InstanceNormalization
 
@@ -21,4 +22,3 @@ class ComixGAN:
                 with tf.device('/device:GPU:0'):
                     self.model = load_model(settings.COMIX_GAN_MODEL_PATH,
                                             custom_objects={'InstanceNormalization': InstanceNormalization})
-
